@@ -3,15 +3,49 @@
 const App = {
   init() {
     console.log("lets start");
-    dayjs.extend(dayjs_plugin_localizedFormat);
 
     this.controllers.renderComponents();
+    this.controllers.renderHome();
+    this.controllers.renderSkills();
     this.controllers.updateTime();
+
+    const searchParams = new URLSearchParams(location.search);
+    const page = searchParams.get("page");
+    this.router.go(page);
 
     console.log("end");
   },
 
   store: {},
+
+  router: {
+    go(newPage) {
+      console.log("lets go to", newPage);
+
+      // Get current params
+      const searchParams = new URLSearchParams(location.search);
+
+      // Set new params
+      searchParams.set("page", newPage);
+
+      // Create new query string, must have `?`
+      const path = newPage ? `?${searchParams.toString()}` : "?";
+
+      console.log(searchParams.toString());
+      console.log(path);
+
+      history.pushState({ page: newPage }, newPage, path);
+
+      App.elements.main.index.style.display = "none";
+      App.elements.skills.index.style.display = "none";
+
+      if (!newPage) {
+        App.elements.main.index.style.display = "block";
+      } else if (newPage === "skills") {
+        App.elements.skills.index.style.display = "block";
+      }
+    },
+  },
 
   controllers: {
     renderComponents() {
@@ -40,10 +74,44 @@ const App = {
       els.headerRightA3.style.cursor = "pointer";
       els.headerRightA4.style.cursor = "pointer";
 
-      els.main.style.padding = "80px";
-      els.main.style.overflow = "hidden";
-      els.main.style.height = "1700px";
-      els.main.style.position = "relative";
+      //-------header
+      els.app.appendChild(els.header);
+      els.header.appendChild(els.headerCon);
+      els.headerCon.appendChild(els.headerLeft);
+      els.headerCon.appendChild(els.headerRight);
+      els.headerLeft.appendChild(els.headerLeftA);
+      els.headerLeftA.appendChild(els.headerLeftAImg);
+      els.headerLeftAImg.src =
+        "https://fontmeme.com/permalink/210330/86265904da868351312d6fcc83be3480.png";
+      els.headerRight.appendChild(els.headerRightA1);
+      els.headerRightA1.innerHTML = "Home";
+      els.headerRightA1.onclick = function () {
+        App.router.go("");
+      };
+
+      els.headerRight.appendChild(els.headerRightA2);
+      els.headerRightA2.innerHTML = "Skills";
+      els.headerRightA2.onclick = function () {
+        App.router.go("skills");
+      };
+
+      els.headerRight.appendChild(els.headerRightA3);
+      els.headerRightA3.innerHTML = "Works";
+      els.headerRight.appendChild(els.headerRightA4);
+      els.headerRightA4.innerHTML = "Playground";
+
+      console.log("Done");
+      console.log(app);
+    },
+
+    renderHome() {
+      const els = App.elements.main;
+
+      els.index.style.padding = "80px";
+      els.index.style.overflow = "hidden";
+      els.index.style.height = "1700px";
+      els.index.style.position = "relative";
+      els.index.style.display = "none";
 
       els.shapeTop.style.position = "absolute";
       els.shapeTop.style.zIndex = -1;
@@ -134,31 +202,12 @@ const App = {
       els.worksConSectionP3.style.boxShadow =
         "3px 5px 5px rgba(70, 62, 62, 0.15)";
 
-      //-------header
-      els.app.appendChild(els.header);
-      els.header.appendChild(els.headerCon);
-      els.headerCon.appendChild(els.headerLeft);
-      els.headerCon.appendChild(els.headerRight);
-      els.headerLeft.appendChild(els.headerLeftA);
-      els.headerLeftA.appendChild(els.headerLeftAImg);
-      els.headerLeftAImg.src =
-        "https://fontmeme.com/permalink/210330/86265904da868351312d6fcc83be3480.png";
-      els.headerRight.appendChild(els.headerRightA1);
-      els.headerRightA1.innerHTML = "Home";
-      els.headerRight.appendChild(els.headerRightA2);
-      els.headerRightA2.innerHTML = "Skills";
-      els.headerRight.appendChild(els.headerRightA3);
-      els.headerRightA3.innerHTML = "Works";
-      els.headerRight.appendChild(els.headerRightA4);
-      els.headerRightA4.innerHTML = "Playground";
-
-      //-------main
-      els.app.appendChild(els.main);
+      App.elements.app.appendChild(els.index);
       //-------home
-      els.main.appendChild(els.home);
-      els.main.appendChild(els.shapeTop);
+      els.index.appendChild(els.home);
+      els.index.appendChild(els.shapeTop);
       els.shapeTop.src = "./assets/blob.svg";
-      els.main.appendChild(els.shapeBottom);
+      els.index.appendChild(els.shapeBottom);
       els.shapeBottom.src = "./assets/blob.svg";
       els.home.appendChild(els.homeMessage);
       els.homeMessage.appendChild(els.homeMessageH1);
@@ -177,7 +226,7 @@ const App = {
         animationData: A1,
       });
       //--------skills
-      els.main.appendChild(els.skills);
+      els.index.appendChild(els.skills);
       els.skills.appendChild(els.skillsHeading);
       els.skillsHeading.innerHTML = "Skills";
       els.skills.appendChild(els.skillsCon);
@@ -219,7 +268,7 @@ const App = {
       els.skillsConBox3.appendChild(els.skillsConBox3P3);
       els.skillsConBox3P3.innerHTML = "Rhinoceros";
       //-------works
-      els.main.appendChild(els.works);
+      els.index.appendChild(els.works);
       els.works.appendChild(els.worksHeading);
       els.worksHeading.innerHTML = "Works";
       els.works.appendChild(els.worksCon);
@@ -239,22 +288,23 @@ const App = {
       els.worksConSectionP2.innerHTML = "coming soon...";
       els.worksConSection.appendChild(els.worksConSectionP3);
       els.worksConSectionP3.innerHTML = "coming soon...";
+    },
 
-      console.log("Done");
-      console.log(app);
+    renderSkills() {
+      const els = App.elements.skills;
+
+      els.index.innerHTML = "skilsssssss";
+      els.index.style.display = "none";
+      App.elements.app.appendChild(els.index);
     },
 
     updateTime() {
-      const els = App.elements;
+      const els = App.elements.main;
       const now = dayjs();
-
-      console.log("now", now.format("LLLL"));
 
       els.homeMessageH1.innerHTML = now.format("YYYY-MM-DD HH:mm:ss");
 
-      // now
       setTimeout(() => {
-        // 1s ato
         App.controllers.updateTime();
       }, 1000);
     },
@@ -274,52 +324,59 @@ const App = {
     headerRightA3: document.createElement("a"),
     headerRightA4: document.createElement("a"),
     //------main
-    main: document.createElement("div"),
-    shapeTop: document.createElement("img"),
-    shapeBottom: document.createElement("img"),
-    //-----home
-    home: document.createElement("div"),
-    homeMessage: document.createElement("div"),
-    homeMessageH1: document.createElement("h1"),
-    homeMessageP1: document.createElement("p"),
-    homeMessageBtn: document.createElement("button"),
-    homeTopAnimation: document.createElement("div"),
-    a1: document.createElement("div"),
-    //-----skills
-    skills: document.createElement("div"),
-    skillsHeading: document.createElement("div"),
-    skillsCon: document.createElement("div"),
-    skillsConBox1: document.createElement("div"),
-    skillsConBox2: document.createElement("div"),
-    skillsConBox3: document.createElement("div"),
+    main: {
+      index: document.createElement("div"),
+      shapeTop: document.createElement("img"),
+      shapeBottom: document.createElement("img"),
+      //-----home
+      home: document.createElement("div"),
+      homeMessage: document.createElement("div"),
+      homeMessageH1: document.createElement("h1"),
+      homeMessageP1: document.createElement("p"),
+      homeMessageBtn: document.createElement("button"),
+      homeTopAnimation: document.createElement("div"),
+      a1: document.createElement("div"),
+      //-----skills
+      skills: document.createElement("div"),
+      skillsHeading: document.createElement("div"),
+      skillsCon: document.createElement("div"),
+      skillsConBox1: document.createElement("div"),
+      skillsConBox2: document.createElement("div"),
+      skillsConBox3: document.createElement("div"),
 
-    skillsConBox1Img: document.createElement("img"),
-    skillsConBox1H2: document.createElement("h2"),
-    skillsConBox1P1: document.createElement("p"),
-    skillsConBox1P2: document.createElement("p"),
-    skillsConBox1P3: document.createElement("p"),
+      skillsConBox1Img: document.createElement("img"),
+      skillsConBox1H2: document.createElement("h2"),
+      skillsConBox1P1: document.createElement("p"),
+      skillsConBox1P2: document.createElement("p"),
+      skillsConBox1P3: document.createElement("p"),
 
-    skillsConBox2Img: document.createElement("img"),
-    skillsConBox2H2: document.createElement("h2"),
-    skillsConBox2P1: document.createElement("p"),
-    skillsConBox2P2: document.createElement("p"),
-    skillsConBox2P3: document.createElement("p"),
+      skillsConBox2Img: document.createElement("img"),
+      skillsConBox2H2: document.createElement("h2"),
+      skillsConBox2P1: document.createElement("p"),
+      skillsConBox2P2: document.createElement("p"),
+      skillsConBox2P3: document.createElement("p"),
 
-    skillsConBox3Img: document.createElement("img"),
-    skillsConBox3H2: document.createElement("h2"),
-    skillsConBox3P1: document.createElement("p"),
-    skillsConBox3P2: document.createElement("p"),
-    skillsConBox3P3: document.createElement("p"),
-    //-------work
-    works: document.createElement("div"),
-    worksHeading: document.createElement("div"),
-    worksCon: document.createElement("div"),
-    worksConAnimation: document.createElement("div"),
-    a2: document.createElement("div"),
-    worksConSection: document.createElement("div"),
-    worksConSectionP1: document.createElement("p"),
-    worksConSectionP2: document.createElement("p"),
-    worksConSectionP3: document.createElement("p"),
+      skillsConBox3Img: document.createElement("img"),
+      skillsConBox3H2: document.createElement("h2"),
+      skillsConBox3P1: document.createElement("p"),
+      skillsConBox3P2: document.createElement("p"),
+      skillsConBox3P3: document.createElement("p"),
+
+      //-------work
+      works: document.createElement("div"),
+      worksHeading: document.createElement("div"),
+      worksCon: document.createElement("div"),
+      worksConAnimation: document.createElement("div"),
+      a2: document.createElement("div"),
+      worksConSection: document.createElement("div"),
+      worksConSectionP1: document.createElement("p"),
+      worksConSectionP2: document.createElement("p"),
+      worksConSectionP3: document.createElement("p"),
+    },
+
+    skills: {
+      index: document.createElement("div"),
+    },
   },
 };
 
