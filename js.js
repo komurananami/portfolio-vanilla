@@ -3,10 +3,10 @@
 const App = {
   init() {
     console.log("lets start");
+    dayjs.extend(dayjs_plugin_localizedFormat);
 
     this.controllers.renderComponents();
-
-    console.log(dayjs());
+    this.controllers.updateTime();
 
     console.log("end");
   },
@@ -162,7 +162,6 @@ const App = {
       els.shapeBottom.src = "./assets/blob.svg";
       els.home.appendChild(els.homeMessage);
       els.homeMessage.appendChild(els.homeMessageH1);
-      els.homeMessageH1.innerHTML = "Nanami Komura's </br>Portfolio";
       els.homeMessage.appendChild(els.homeMessageP1);
       els.homeMessageP1.innerHTML =
         "welcome to my portfolio site. <br/> This is my introduction and tech notes. <br />You can see tech record <br/>in PLAYGROUND";
@@ -243,6 +242,21 @@ const App = {
 
       console.log("Done");
       console.log(app);
+    },
+
+    updateTime() {
+      const els = App.elements;
+      const now = dayjs();
+
+      console.log("now", now.format("LLLL"));
+
+      els.homeMessageH1.innerHTML = now.format("YYYY-MM-DD HH:mm:ss");
+
+      // now
+      setTimeout(() => {
+        // 1s ato
+        App.controllers.updateTime();
+      }, 1000);
     },
   },
 
