@@ -7,6 +7,7 @@ const App = {
     this.controllers.renderComponents();
     this.controllers.renderHome();
     this.controllers.renderSkills();
+    this.controllers.renderWorks();
     this.controllers.updateTime();
 
     const searchParams = new URLSearchParams(location.search);
@@ -38,11 +39,14 @@ const App = {
 
       App.elements.main.index.style.display = "none";
       App.elements.skills.index.style.display = "none";
+      App.elements.works.index.style.display = "none";
 
       if (!newPage) {
         App.elements.main.index.style.display = "block";
       } else if (newPage === "skills") {
         App.elements.skills.index.style.display = "block";
+      } else if (newPage === "works") {
+        App.elements.works.index.style.display = "block";
       }
     },
   },
@@ -97,6 +101,9 @@ const App = {
 
       els.headerRight.appendChild(els.headerRightA3);
       els.headerRightA3.innerHTML = "Works";
+      els.headerRightA3.onclick = function () {
+        App.router.go("works");
+      };
       els.headerRight.appendChild(els.headerRightA4);
       els.headerRightA4.innerHTML = "Playground";
 
@@ -298,6 +305,14 @@ const App = {
       App.elements.app.appendChild(els.index);
     },
 
+    renderWorks() {
+      const els = App.elements.works;
+
+      els.index.innerHTML = "works";
+      els.index.style.display = "none";
+      App.elements.app.appendChild(els.index);
+    },
+
     updateTime() {
       const els = App.elements.main;
       const now = dayjs();
@@ -375,6 +390,10 @@ const App = {
     },
 
     skills: {
+      index: document.createElement("div"),
+    },
+
+    works: {
       index: document.createElement("div"),
     },
   },
