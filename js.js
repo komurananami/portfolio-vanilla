@@ -8,6 +8,7 @@ const App = {
     this.controllers.renderHome();
     this.controllers.renderSkills();
     this.controllers.renderWorks();
+    this.controllers.renderPlayground();
     this.controllers.updateTime();
 
     const searchParams = new URLSearchParams(location.search);
@@ -27,7 +28,7 @@ const App = {
       const searchParams = new URLSearchParams(location.search);
 
       // Set new params
-      searchParams.set("page", newPage);
+      searchParams.set("page", newPage); //pageはURLSearchParamsのkeyなので、同じkeyならupdate,別のkeyならcreateする
 
       // Create new query string, must have `?`
       const path = newPage ? `?${searchParams.toString()}` : "?";
@@ -40,6 +41,7 @@ const App = {
       App.elements.main.index.style.display = "none";
       App.elements.skills.index.style.display = "none";
       App.elements.works.index.style.display = "none";
+      App.elements.playground.index.style.display = "none";
 
       if (!newPage) {
         App.elements.main.index.style.display = "block";
@@ -47,6 +49,8 @@ const App = {
         App.elements.skills.index.style.display = "block";
       } else if (newPage === "works") {
         App.elements.works.index.style.display = "block";
+      } else if (newPage === "playground") {
+        App.elements.playground.index.style.display = "block";
       }
     },
   },
@@ -106,6 +110,9 @@ const App = {
       };
       els.headerRight.appendChild(els.headerRightA4);
       els.headerRightA4.innerHTML = "Playground";
+      els.headerRightA4.onclick = function () {
+        App.router.go("playground");
+      };
 
       console.log("Done");
       console.log(app);
@@ -313,6 +320,14 @@ const App = {
       App.elements.app.appendChild(els.index);
     },
 
+    renderPlayground() {
+      const els = App.elements.playground;
+
+      els.index.innerHTML = "playground";
+      els.index.style.display = "none";
+      App.elements.app.appendChild(els.index);
+    },
+
     updateTime() {
       const els = App.elements.main;
       const now = dayjs();
@@ -394,6 +409,10 @@ const App = {
     },
 
     works: {
+      index: document.createElement("div"),
+    },
+
+    playground: {
       index: document.createElement("div"),
     },
   },
